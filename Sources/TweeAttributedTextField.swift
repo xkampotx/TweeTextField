@@ -5,36 +5,30 @@
 import UIKit
 
 /// An object of the class can show the custom info label under text field.
-public class TweeAttributedTextField: TweeActiveTextField {
+open class TweeAttributedTextField: TweeActiveTextField {
 
 	/// Info label that is shown for a user. This label will appear under the text field.
 	/// You can use it to configure appearance.
 	public private(set) lazy var infoLabel = UILabel()
 
 	/// Animation duration for showing and hiding the info label.
-	@IBInspectable public private(set) var infoAnimationDuration: Double = 1
+	@IBInspectable public var infoAnimationDuration: Double = 1
 
 	/// Color of info text.
 	@IBInspectable public var infoTextColor: UIColor {
-		get {
-			return infoLabel.textColor
-		} set {
-			infoLabel.textColor = newValue
-		}
+		get { return infoLabel.textColor }
+        set { infoLabel.textColor = newValue }
 	}
 
 	/// Font size of info text. If you want to change font use `infoLabel` property.
 	@IBInspectable public var infoFontSize: CGFloat {
-		get {
-			return infoLabel.font.pointSize
-		} set {
-			infoLabel.font = infoLabel.font.withSize(newValue)
-		}
+		get { return infoLabel.font.pointSize }
+        set { infoLabel.font = infoLabel.font.withSize(newValue) }
 	}
 
 	// MARK: Methods
 
-	override public func awakeFromNib() {
+	override open func awakeFromNib() {
 		super.awakeFromNib()
 		plugLabelIfNeeded()
 	}

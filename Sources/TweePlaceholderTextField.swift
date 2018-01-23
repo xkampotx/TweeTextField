@@ -5,7 +5,7 @@
 import UIKit
 
 /// An object of the class has a customized placeholder label which has animations on the beginning and ending editing.
-public class TweePlaceholderTextField: UITextField {
+open class TweePlaceholderTextField: UITextField {
 
 	/// Animation type when a user begins editing.
 	/// - immediately: Sets minimum font size immediately when a user begins editing.
@@ -21,11 +21,11 @@ public class TweePlaceholderTextField: UITextField {
 	/// Default is `immediately`.
 	public var minimizationAnimationType: MinimizationAnimationType = .immediately
 	/// Minimum font size for the custom placeholder.
-	@IBInspectable public private(set) var minimumPlaceholderFontSize: CGFloat = 12
+	@IBInspectable public var minimumPlaceholderFontSize: CGFloat = 12
 	/// Original (maximum) font size for the custom placeholder.
-	@IBInspectable public private(set) var originalPlaceholderFontSize: CGFloat = 17
+	@IBInspectable public var originalPlaceholderFontSize: CGFloat = 17
 	/// Placeholder animation duration.
-	@IBInspectable public private(set) var placeholderDuration: Double = 0.5
+	@IBInspectable public var placeholderDuration: Double = 0.5
 	/// Color of custom placeholder.
 	@IBInspectable public var placeholderColor: UIColor? {
 		get {
@@ -36,32 +36,26 @@ public class TweePlaceholderTextField: UITextField {
 	}
 	/// The styled string for a custom placeholder.
 	public var attributedTweePlaceholder: NSAttributedString? {
-		get {
-			return placeholderLabel.attributedText
-		} set {
-			setAttributedPlaceholderText(newValue)
-		}
+		get { return placeholderLabel.attributedText }
+        set { setAttributedPlaceholderText(newValue) }
 	}
 
 	/// The string that is displayed when there is no other text in the text field.
 	@IBInspectable public var tweePlaceholder: String? {
-		get {
-			return placeholderLabel.text
-		} set {
-			setPlaceholderText(newValue)
-		}
+		get { return placeholderLabel.text }
+        set { setPlaceholderText(newValue) }
 	}
 
 	/// Custom placeholder label. You can use it to style placeholder text.
 	public private(set) lazy var placeholderLabel = UILabel()
 
-	public override var text: String? {
+	open override var text: String? {
 		didSet {
 			setCorrectPlaceholderSize()
 		}
 	}
 
-	public override var attributedText: NSAttributedString? {
+	open override var attributedText: NSAttributedString? {
 		didSet {
 			setCorrectPlaceholderSize()
 		}
@@ -70,14 +64,22 @@ public class TweePlaceholderTextField: UITextField {
 	// Private
 
 	private var minimizeFontAnimation: FontAnimation!
-
 	private var maximizeFontAnimation: FontAnimation!
 
 	private var bottomConstraint: NSLayoutConstraint?
 
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+        initializeTextField()
+    }
+
+    public required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+
 	// MARK: Methods
 
-	override public func awakeFromNib() {
+	override open func awakeFromNib() {
 		super.awakeFromNib()
 		initializeTextField()
 	}
@@ -116,9 +118,9 @@ public class TweePlaceholderTextField: UITextField {
 	}
 
 	@objc private func setCorrectPlaceholderSize() {
-		if let text = text, text.isEmpty == false {
+		if let text = text, !text.isEmpty {
 			minimizePlaceholder()
-		} else if isEditing == false {
+		} else if !isEditing {
 			maximizePlaceholder()
 		}
 	}
@@ -135,9 +137,9 @@ public class TweePlaceholderTextField: UITextField {
 			case .smoothly:
 				self.minimizeFontAnimation.start()
 			}
-		}) { _ in
+        }, completion: { _ in
 			self.minimizeFontAnimation.stop()
-		}
+		})
 	}
 
 	@objc private func minimizePlaceholderFontSize() {
@@ -160,7 +162,7 @@ public class TweePlaceholderTextField: UITextField {
 	}
 
 	@objc private func maximizePlaceholder() {
-		if let text = text, text.isEmpty == false {
+		if let text = text, !text.isEmpty {
 			return
 		}
 
@@ -169,10 +171,9 @@ public class TweePlaceholderTextField: UITextField {
 		UIView.animate(withDuration: placeholderDuration, delay: 0, options: [.preferredFramesPerSecond30], animations: {
 			self.layoutIfNeeded()
 			self.maximizeFontAnimation.start()
-		}) { (_) in
+        }, completion: { _ in
 			self.maximizeFontAnimation.stop()
-			// self.placeholderLabel.font = self.placeholderLabel.font.withSize(self.originalPlaceholderFontSize)
-		}
+		})
 	}
 
 	@objc private func maximizePlaceholderFontSize() {
